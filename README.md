@@ -1,1 +1,1 @@
-# liff-redirect
+LIFF跳轉頁面
