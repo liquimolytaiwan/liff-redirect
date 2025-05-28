@@ -6,18 +6,25 @@
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script>
     async function main() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirectUrl = urlParams.get("redirect") || "https://www.liqui-moly-taiwan.com";
-      try {
-        await liff.init({ liffId: "2007212992-knvrpDVw" }); // 你的 LIFF ID
-        liff.openWindow({
-          url: redirectUrl,
-          external: true
-        });
-      } catch (err) {
-        document.body.innerHTML = "<h3>❌ 無法跳轉</h3><pre>" + err + "</pre>";
+      await liff.init({ liffId: "2007212992-knvrpDVw" });
+      
+      if (!liff.isLoggedIn()) {
+        liff.login(); // 強制登入
+        return;
       }
+
+      const profile = await liff.getProfile();
+      const lineUid = profile.userId;
+
+      // 回傳 UID 到 Wix 網站（推薦直接使用GET傳回）
+      const redirectUrl = new URL("https://www.liqui-moly-taiwan.com");
+      redirectUrl.searchParams.set("lineUid", lineUid);
+      redirectUrl.searchParams.set("state", "lmgt2025");
+
+      // 強制在外部瀏覽器中開啟，這裡一定要用 location.href 而非 openWindow
+      window.location.href = redirectUrl.toString();
     }
+
     window.onload = main;
   </script>
   <style>
